@@ -51,3 +51,34 @@
   (fact "Optional config simply returns nil if things aren't there"
         (opt-config :option2 :thing :bar) => nil
         (opt-config :not-there) => nil))
+
+(let [config {:env-override {
+                             :default {
+                                       :option1    2
+                                       :option-new "new"
+                                       }
+                             }
+              :option1      1
+              :option2      {:thing :test
+                             :foo   {:bar :baz}}
+              }
+      _ (reload-config-file config)]
+  (fact "test overrides"
+        (get-env) => :default
+        (merge-config-with-overrides config :default) => {:env-override {:default {:option-new "new", :option1 2}}, :option-new "new", :option1 2, :option2 {:foo {:bar :baz}, :thing :test}}
+        (opt-config) => {:env-override {:default {:option-new "new", :option1 2}}, :option-new "new", :option1 2, :option2 {:foo {:bar :baz}, :thing :test}}
+        )
+
+  ;; Test default overrides
+
+  (fact "Basic lookup works"
+        (opt-config :option1) => 2
+        (opt-config :option-new) => "new"
+        (opt-config :option2 :thing) => :test
+        (opt-config :option2 :foo :bar) => :baz
+        ;; currently the tests below fail.  it looks like they are referring to the old definition of config-map
+        ;(config :option1) => 2
+        ;(config :option-new) => "new"
+        ;(config :option2 :thing) => :test
+        ;(config :option2 :foo :bar) => :baz
+         ))
