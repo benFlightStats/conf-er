@@ -1,6 +1,6 @@
 ;;; Copyright (c) 2013 TouchType Ltd. All Rights Reserved.
 
-(defproject conf-er "1.0.2-SNAPSHOT"
+(defproject org.clojars.allumbra/conf-er "1.0.3"
   :description "Simple global configuration library"
   :url "https://github.com/benFlightStats/conf-er"
   :license {:name "Eclipse Public License"
