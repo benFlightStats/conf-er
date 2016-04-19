@@ -25,13 +25,20 @@
   "Handle to env.  env variable name is defined -Denv-name= java
    property. This can be set with leiningen in the :jvm-opts vector"
   []
-  (if-let [env-name (System/getProperty "env-name")]
+  (if-let [env-name (System/getProperty "env_name")]
     (or (keyword (System/getenv env-name))
         :default)
     :default))
 
+(defn deep-merge [a b]
+  (merge-with (fn [x y]
+                (cond (map? y) (deep-merge x y)
+                      (vector? y) (concat x y)
+                      :else y))
+              a b))
+
 (defn merge-config-with-overrides [configs env]
-    (merge configs (get-in configs [:env-override env]))
+    (deep-merge configs (get-in configs [:env-override env]))
   )
 
 (defn reload-config-file
